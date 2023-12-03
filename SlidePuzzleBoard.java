@@ -5,6 +5,10 @@ import java.util.*;
 public class SlidePuzzleBoard { 
 	private PuzzlePiece[][] board;
 	
+	// 움직이는 횟수에 따라 점수를 카운트
+	private int score;
+	private int moveCount;
+
 	// 빈칸의 좌표 
 	private int empty_row;
 	private int empty_col;
@@ -13,6 +17,11 @@ public class SlidePuzzleBoard {
 	private boolean game_on = false;
 	
 	public SlidePuzzleBoard() {
+
+		// 점수 관련 생성자 초기화
+		score = 0;
+		moveCount = 0;
+
 		board = new PuzzlePiece[4][4];
 		// 퍼즐 조각 1~15를 보드에 순서대로 끼우기 
 		int number = 1;
@@ -120,6 +129,20 @@ public class SlidePuzzleBoard {
 	        permutation[d] = i;
 	    }
 	    return permutation;
+	}
+	
+	/** move - 플레이어가 게임 중 퍼즐을 움직이는 수 계산
+	 */
+
+	 public void move(){
+		moveCount++;
+	 }
+
+	 /** getMoveCount - 현재 움직인 횟수를 반환하는 메서드 (점수 계산, 게임 중 출력) 
+	  * @return 움직인 횟수
+	 */
+	public int getMoveCount(){
+		return moveCount;
 	}
 	
 	/** gameOver - 퍼즐 게임이 끝났는지를 확인  

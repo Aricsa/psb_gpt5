@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 public class PuzzleFrame extends JFrame {
+
 	
 	private SlidePuzzleBoard board;
 	private PuzzleButton[][] button_board;
@@ -14,8 +15,15 @@ public class PuzzleFrame extends JFrame {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 		JPanel p1 = new JPanel(new FlowLayout());
+		
+		// 점수 라벨 추가
+		JLabel scoreLabel = new JLabel("Score: " + calculateScore());
+		
+		p1.add(scoreLabel, BorderLayout.NORTH);
 		p1.add(new StartButton(board, this));
+		
 		JPanel p2 = new JPanel(new GridLayout(4,4));
+		
 		for (int row = 0; row < button_board.length; row++)
 			for (int col = 0; col < button_board.length; col++) {
 				button_board[row][col] = new PuzzleButton(board, this);
@@ -41,11 +49,20 @@ public class PuzzleFrame extends JFrame {
 				else
 					button_board[row][col].setText("");
 			}
+			
+			// 점수 업데이트
+			scoreLabel.setText("Score: " + calculateScore());
 	}
 	
 	/** finish - 퍼즐 게임 종료를 표시함 */
 	public void finish() {
 		button_board[3][3].setText("Done");
+	}
+
+
+	/** calculateScore - 움직인 횟수에 따라 점수를 부여 */
+	private int calculateScore() {
+		return puzzleBoard.getMoveCount();
 	}
 
 }
