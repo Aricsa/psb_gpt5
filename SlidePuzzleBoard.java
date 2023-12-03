@@ -1,9 +1,10 @@
-package slidepuzzleplus;
+
 import java.util.*;
 
 /** SlidePuzzleBoard models a slide puzzle. */ 
 public class SlidePuzzleBoard { 
 	private PuzzlePiece[][] board;
+	private PuzzleFrame frame;
 	
 	// 움직이는 횟수에 따라 점수를 카운트
 	private int score;
@@ -76,6 +77,13 @@ public class SlidePuzzleBoard {
 		}
 		else
 			return false;
+
+		 // 움직임이 가능한 경우 moveCount를 증가시킨다.
+        if (board[empty_row][empty_col] != null) {
+            moveCount();
+            frame.update();
+        }
+
 		// w를 빈칸에 복사
 		board[empty_row][empty_col] = board[row][col];
 		// 빈칸 위치를 새로 설정하고, w를 제거
@@ -131,10 +139,10 @@ public class SlidePuzzleBoard {
 	    return permutation;
 	}
 	
-	/** move - 플레이어가 게임 중 퍼즐을 움직이는 수 계산
+	/** moveCount - 플레이어가 게임 중 퍼즐을 움직이는 수 계산
 	 */
 
-	 public void move(){
+	 public void moveCount(){
 		moveCount++;
 	 }
 
