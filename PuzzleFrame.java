@@ -21,11 +21,21 @@ public class PuzzleFrame extends JFrame {
 				button_board[row][col] = new PuzzleButton(board, this);
 				p2.add(button_board[row][col]);
 			}
+		JPanel p3 = new JPanel(new GridLayout(4, 2, 20, 10));
+		p3.add(new MoveButton(board, this, 1, "↑"));
+		p3.add(new MoveButton(board, this, 2, "↓"));
+		p3.add(new MoveButton(board, this, 3, "←"));
+		p3.add(new MoveButton(board, this, 4, "→"));
+		p3.add(new LineMoveButton(board, this , 1 , "↑↑"));
+		p3.add(new LineMoveButton(board, this , 2 , "↓↓"));
+		p3.add(new LineMoveButton(board, this , 3 , "←←"));
+		p3.add(new LineMoveButton(board, this , 4 , "→→"));
 		cp.add(p1, BorderLayout.NORTH);
 		cp.add(p2, BorderLayout.CENTER);
+		cp.add(p3, BorderLayout.SOUTH);
 		update();
 		setTitle("Slide Puzzle");
-		setSize(250,300);
+		setSize(300,400);
 		setVisible(true);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
