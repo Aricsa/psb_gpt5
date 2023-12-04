@@ -44,6 +44,7 @@ public class PuzzleFrame extends JFrame {
 		
 		// 점수 업데이트
 		scoreLabel.setText("Score: " + calculateScore());
+		
 		for (int row = 0; row < button_board.length; row++)
 			for (int col = 0; col < button_board.length; col++) {
 				pp = board.getPuzzlePiece(row, col);
@@ -53,7 +54,7 @@ public class PuzzleFrame extends JFrame {
 					button_board[row][col].setText("");
 			}
 			
-			AbstractButton scoreLabel;
+			
 			
 			
 	}
@@ -62,6 +63,12 @@ public class PuzzleFrame extends JFrame {
 	public void finish() {
 		button_board[3][3].setText("Done");
 	}
+
+	/** fail - 퍼즐 게임 실패를 표시함 */
+	public void fail() {
+		button_board[3][3].setText("fail");
+	}
+
 
 
 	/** calculateScore - 움직인 횟수에 따라 점수를 부여 */

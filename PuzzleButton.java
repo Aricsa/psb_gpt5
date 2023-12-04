@@ -20,8 +20,12 @@ public class PuzzleButton extends JButton implements ActionListener {
 			if (! s.equals("") && board.move(Integer.parseInt(s))) {
 				board.moveCount();
                 frame.update();
-				if (board.gameOver()) 
+				if (board.gameOver()){ 
 					frame.finish();
+			    } else if(board.gameFail()){
+					frame.fail();
+				}
+
 			}
 		}
 	}

@@ -7,7 +7,6 @@ public class SlidePuzzleBoard {
 	private PuzzleFrame frame;
 	
 	// 움직이는 횟수에 따라 점수를 카운트
-	private int score;
 	private int moveCount;
 
 	// 빈칸의 좌표 
@@ -20,7 +19,6 @@ public class SlidePuzzleBoard {
 	public SlidePuzzleBoard() {
 
 		// 점수 관련 생성자 초기화
-		score = 0;
 		moveCount = 0;
 
 		board = new PuzzlePiece[4][4];
@@ -169,6 +167,20 @@ public class SlidePuzzleBoard {
 						else 
 							number += 1;
 				}
+			game_on = false;
+			return true;
+			
+		}
+
+	}
+
+	/** gameFail - 플레이어의 움직임 가능 횟수가 초과했는지 확인 
+	 * @return 초과했으면, true, 아직 더 남아있다면 false 
+	 */
+	public boolean gameFail() {
+		if (1000-moveCount*10 > 0)
+			return false;
+		else {
 			game_on = false;
 			return true;
 			
