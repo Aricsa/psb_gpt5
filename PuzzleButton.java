@@ -22,10 +22,12 @@ public class PuzzleButton extends JButton implements ActionListener {
                 frame.update();
 				if (board.gameOver()){ 
 					frame.finish();
+					board.saveRank();
 			    } else if(board.gameFail()){
 					frame.fail();
+					board.saveRank();
 				}
-
+				
 			}
 		}
 	}

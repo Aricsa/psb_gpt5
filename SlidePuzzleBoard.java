@@ -1,10 +1,18 @@
 
 import java.util.*;
 
+import javax.swing.JTextArea;
+
 /** SlidePuzzleBoard models a slide puzzle. */ 
 public class SlidePuzzleBoard { 
 	private PuzzlePiece[][] board;
 	private PuzzleFrame frame;
+	File_IO fi = new File_IO();
+	JTextArea rank = new JTextArea();
+    JTextArea ranknum = new JTextArea();
+    JTextArea scoresign = new JTextArea();
+	private int score = 0;
+	
 	
 	// 움직이는 횟수에 따라 점수를 카운트
 	private int moveCount;
@@ -187,6 +195,25 @@ public class SlidePuzzleBoard {
 		}
 
 	}
+
+	
+
+	/** saveRank - 점수 데이터 베이스에 저장 */
+    public void saveRank()
+    {
+		score = 1000 - moveCount * 10; // 수정해야할 부분(김민서)
+        if(score != 0)
+            fi.saveFile(score+"\n");
+    }
+	
+	/** restart - 점수 결과를 저장하고, 설정값 초기화를 통한 게임 재시작 */
+	public void restart()
+    {
+        frame.importRank();
+		moveCount = 0;
+		score = 1000;
+    
+    }
 
 }
 	
