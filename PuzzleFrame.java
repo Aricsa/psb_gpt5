@@ -91,7 +91,7 @@ public class PuzzleFrame extends JFrame {
 	}
 
 	private void updateUI() {
-		getContentPane().removeAll();  // 기존 컴포넌트 제거
+		getContentPane().removeAll();
 
 		JPanel p1 = new JPanel(new FlowLayout());
 		p1.add(difficultyComboBox);
