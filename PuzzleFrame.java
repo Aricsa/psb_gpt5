@@ -53,6 +53,7 @@ public class PuzzleFrame extends JFrame {
 		timer.setInitialDelay(0);
 	}
 
+	/** updateTimer -  게임이 시작된 후 경과한 시간을 표시하고 업데이트 **/
 	private void updateTimer() {
 		long currentTime = System.currentTimeMillis();
 		long elapsedTime = (currentTime - startTime) / 1000; // in seconds
@@ -67,6 +68,7 @@ public class PuzzleFrame extends JFrame {
 	}
 
 
+	/** updateDifficulty - 선택된 난이도에 따라 게임 보드의 크기를 조절하고, 타이머를 초기화하며 UI를 업데이트 **/
 	private void updateDifficulty() {
 		String selectedDifficulty = (String) difficultyComboBox.getSelectedItem();
 		int puzzleSize;
@@ -90,6 +92,7 @@ public class PuzzleFrame extends JFrame {
 		updateUI();
 	}
 
+	/** updateUI - timeLabel을 화면 하단에 추가 **/
 	private void updateUI() {
 		getContentPane().removeAll();
 
@@ -114,7 +117,7 @@ public class PuzzleFrame extends JFrame {
 		repaint();
 	}
 
-	/** update - 보드 프레임을 갱신함 */
+	/** update - 보드 프레임을 갱신함 **/
 	public void update() {
 		PuzzlePiece pp;
 		for (int row = 0; row < button_board.length; row++)
@@ -134,6 +137,8 @@ public class PuzzleFrame extends JFrame {
 		timer.start();
 	}
 
+
+	/** startGame - 게임을 시작하고, 게임이 이미 시작 중이면 게임을 다시 시작 **/
 	public void startGame() {
 		timer.stop();
 		timeLabel.setText("00:00:00");
@@ -147,7 +152,7 @@ public class PuzzleFrame extends JFrame {
 		updateUI();
 	}
 
-	/** finish - 퍼즐 게임 종료를 표시함 */
+	/** finish - 퍼즐이 완료되었을 때 마지막 피스에 "Done" 텍스트를 표시하고, 타이머를 정지하며 소요 시간을 표시 **/
 	public void finish() {
 		int puzzleSize = board.getPuzzleSize();
 

@@ -1,10 +1,10 @@
 package slidepuzzleplus;
 import java.util.Random;
 
-/** SlidePuzzleBoard models a slide puzzle. */
 public class SlidePuzzleBoard {
 	private PuzzlePiece[][] board;
 
+	// 빈칸의 좌표
 	private int empty_row;
 	private int empty_col;
 	private boolean game_on = false;
@@ -14,10 +14,15 @@ public class SlidePuzzleBoard {
 		initializeBoard(puzzleSize);
 	}
 
-	public int getPuzzleSize() {
+	/** getPuzzlePiece - 현재 퍼즐의 크기를 확인 **/
+	 public int getPuzzleSize() {
 		return board.length;
 	}
 
+	/** getPuzzlePiece - 퍼즐 조각을 리턴
+	 * @param row - 가로줄 인덱스
+	 * @param col - 세로줄 인덱스
+	 * @return 퍼즐 조각  */
 	public PuzzlePiece getPuzzlePiece(int row, int col) {
 		return board[row][col];
 	}
@@ -58,6 +63,7 @@ public class SlidePuzzleBoard {
 			return false;
 	}
 
+	/** createPuzzleBoard -  퍼즐을 생성하고 셔플, 보드의 크기에 따라 1부터 n까지의 숫자로 초기화되며, 마지막 피스는 null로 설정 **/
 	public void createPuzzleBoard() {
 		int[] numbers = generateRandomPermutation((board.length * board[0].length) - 1);
 		int i = 0;
@@ -101,6 +107,7 @@ public class SlidePuzzleBoard {
 		return true;
 	}
 
+	/** initializeBoard -  퍼즐을 초기화하고 게임을 시작할 때 호출 **/
 	private void initializeBoard(int puzzleSize) {
 		int number = 1;
 		for (int row = 0; row < puzzleSize; row++) {
