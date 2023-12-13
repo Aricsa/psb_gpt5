@@ -120,7 +120,7 @@ public class PuzzleFrame extends JFrame  {
 
 	/** calculateScore - 움직인 횟수에 따라 점수를 부여 */
 	private int calculateScore() {
-		return 1000 - (board.getMoveCount()*10);
+		return 10000 - (board.getMoveCount()*10);
 	}
 
 	public void importRank()

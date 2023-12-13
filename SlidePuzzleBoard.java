@@ -186,7 +186,7 @@ public class SlidePuzzleBoard {
 	 * @return 초과했으면, true, 아직 더 남아있다면 false 
 	 */
 	public boolean gameFail() {
-		if (1000-moveCount*10 > 0)
+		if (10000-moveCount*10 > 0)
 			return false;
 		else {
 			game_on = false;
@@ -201,7 +201,7 @@ public class SlidePuzzleBoard {
 	/** saveRank - 점수 데이터 베이스에 저장 */
     public void saveRank()
     {
-		score = 1000 - moveCount * 10; // 수정해야할 부분(김민서)
+		score = 10000 - moveCount * 10; // 수정해야할 부분(김민서)
         if(score != 0)
             fi.saveFile(score+"\n");
     }
@@ -211,7 +211,7 @@ public class SlidePuzzleBoard {
     {
         frame.importRank();
 		moveCount = 0;
-		score = 1000;
+		score = 10000;
     
     }
 
