@@ -3,38 +3,35 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
 
-public class PuzzleFrame extends JFrame  {
+public class PuzzleFrame extends JFrame {
 
-	
 	private SlidePuzzleBoard board;
 	private PuzzleButton[][] button_board;
 	private JLabel scoreLabel;
 	Container cp = getContentPane();
 	File_IO fi = new File_IO();
-  JTextArea rank = new JTextArea();
-  JTextArea ranknum = new JTextArea();
-  JTextArea scoresign = new JTextArea();
+	JTextArea rank = new JTextArea();
+	JTextArea ranknum = new JTextArea();
+	JTextArea scoresign = new JTextArea();
 	private JLabel timeLabel;
 	private Timer timer;
 	private long startTime;
 	private JPanel buttonPanel = new JPanel();
 	private JComboBox<String> difficultyComboBox;  // 난이도 선택 컴포넌트 추가
-  
-  
+
+
 	public PuzzleFrame() {
 		board = new SlidePuzzleBoard(3);
 		button_board = new PuzzleButton[board.getPuzzleSize()][board.getPuzzleSize()];
-    cp.setLayout(new BorderLayout());
-    
-    JPanel p0 = new JPanel(new FlowLayout());
-		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
-		difficultyComboBox.addActionListener(e -> updateDifficulty());
-		p0.add(difficultyComboBox);
-    
+		cp.setLayout(new BorderLayout());
+
 		JPanel p1 = new JPanel(new FlowLayout());
 		// 점수 라벨 추가
 		scoreLabel = new JLabel("Score: " + calculateScore());
-		
+
+		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
+		difficultyComboBox.addActionListener(e -> updateDifficulty());
+		p1.add(difficultyComboBox);
 		p1.add(new RestartButton(board, this));
 		p1.add(new StartButton(board, this));
 		p1.add(scoreLabel, BorderLayout.NORTH);
@@ -44,58 +41,58 @@ public class PuzzleFrame extends JFrame  {
 				button_board[row][col] = new PuzzleButton(board, this);
 				p2.add(button_board[row][col]);
 			}
-		
+		}
+
 		//왼쪽 서브 패널
-        JPanel rankinglist = new JPanel();
-        rankinglist.setLayout(new BorderLayout());
+		JPanel rankinglist = new JPanel();
+		rankinglist.setLayout(new BorderLayout());
 
-        //상단 랭크 텍스트
-        JPanel textPanel = new JPanel();
-        JLabel westText = new JLabel("랭킹");
-        textPanel.add(westText);
-        westText.setFont(new Font("나눔고딕", Font.BOLD, 15));
-        textPanel.setBackground(new Color(145,181,255));
-        rankinglist.add(textPanel,BorderLayout.NORTH);
+		//상단 랭크 텍스트
+		JPanel textPanel = new JPanel();
+		JLabel westText = new JLabel("랭킹");
+		textPanel.add(westText);
+		westText.setFont(new Font("나눔고딕", Font.BOLD, 15));
+		textPanel.setBackground(new Color(145, 181, 255));
+		rankinglist.add(textPanel, BorderLayout.NORTH);
 
 
-        //순위, 점수 패널
-        JPanel rankpanel = new JPanel();
-        rankpanel.setLayout(new BorderLayout());
-        ranknum.setEditable(false);
-        rank.setEditable(false);
-        rankpanel.add(ranknum,BorderLayout.WEST);
-        rankpanel.add(rank,BorderLayout.CENTER);
-        ranknum.setBackground(new Color(198,217,255));
-        rank.setBackground(new Color(219,231,255));
-        ranknum.setFont(new Font("나눔고딕", Font.BOLD, 10));
-        rank.setFont(new Font("나눔고딕", Font.BOLD, 10));
+		//순위, 점수 패널
+		JPanel rankpanel = new JPanel();
+		rankpanel.setLayout(new BorderLayout());
+		ranknum.setEditable(false);
+		rank.setEditable(false);
+		rankpanel.add(ranknum, BorderLayout.WEST);
+		rankpanel.add(rank, BorderLayout.CENTER);
+		ranknum.setBackground(new Color(198, 217, 255));
+		rank.setBackground(new Color(219, 231, 255));
+		ranknum.setFont(new Font("나눔고딕", Font.BOLD, 10));
+		rank.setFont(new Font("나눔고딕", Font.BOLD, 10));
 
-        //점수 "점"
-        rankpanel.add(scoresign,BorderLayout.EAST);
-        scoresign.setEditable(false);
-        scoresign.setBackground(new Color(219,231,255));
-        scoresign.setFont(new Font("나눔고딕", Font.BOLD, 10));
+		//점수 "점"
+		rankpanel.add(scoresign, BorderLayout.EAST);
+		scoresign.setEditable(false);
+		scoresign.setBackground(new Color(219, 231, 255));
+		scoresign.setFont(new Font("나눔고딕", Font.BOLD, 10));
 
-        rankinglist.add(rankpanel,BorderLayout.CENTER);
+		rankinglist.add(rankpanel, BorderLayout.CENTER);
 
-        importRank();
+		importRank();
 
 		JPanel p3 = new JPanel(new GridLayout(4, 2, 20, 10));
 		p3.add(new MoveButton(board, this, 1, "↑"));
 		p3.add(new MoveButton(board, this, 2, "↓"));
 		p3.add(new MoveButton(board, this, 3, "←"));
 		p3.add(new MoveButton(board, this, 4, "→"));
-		p3.add(new LineMoveButton(board, this , 1 , "↑↑"));
-		p3.add(new LineMoveButton(board, this , 2 , "↓↓"));
-		p3.add(new LineMoveButton(board, this , 3 , "←←"));
-		p3.add(new LineMoveButton(board, this , 4 , "→→"));
+		p3.add(new LineMoveButton(board, this, 1, "↑↑"));
+		p3.add(new LineMoveButton(board, this, 2, "↓↓"));
+		p3.add(new LineMoveButton(board, this, 3, "←←"));
+		p3.add(new LineMoveButton(board, this, 4, "→→"));
 		cp.add(p1, BorderLayout.NORTH);
 		cp.add(p2, BorderLayout.CENTER);
 		cp.add(p3, BorderLayout.SOUTH);
-    cp.add(rankinglist,BorderLayout.WEST);
-		update();
+		cp.add(rankinglist, BorderLayout.WEST);
 		setTitle("Slide Puzzle");
-		setSize(300,400);
+		setSize(400, 600);
 		setVisible(true);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -103,13 +100,12 @@ public class PuzzleFrame extends JFrame  {
 		buttonPanel.add(timeLabel);
 		cp.add(buttonPanel, BorderLayout.EAST);
 
-
 		timer = new Timer(1000, e -> updateTimer());
 		timer.setInitialDelay(0);
 	}
 
-	/** updateTimer -  게임이 시작된 후 경과한 시간을 표시하고 업데이트 **/
-	private void updateTimer() {
+		/** updateTimer -  게임이 시작된 후 경과한 시간을 표시하고 업데이트 **/
+	private void updateTimer () {
 		long currentTime = System.currentTimeMillis();
 		long elapsedTime = (currentTime - startTime) / 1000; // in seconds
 
@@ -124,7 +120,7 @@ public class PuzzleFrame extends JFrame  {
 
 
 	/** updateDifficulty - 선택된 난이도에 따라 게임 보드의 크기를 조절하고, 타이머를 초기화하며 UI를 업데이트 **/
-	private void updateDifficulty() {
+	private void updateDifficulty () {
 		String selectedDifficulty = (String) difficultyComboBox.getSelectedItem();
 		int puzzleSize;
 
@@ -148,13 +144,18 @@ public class PuzzleFrame extends JFrame  {
 	}
 
 	/** updateUI - timeLabel을 화면 하단에 추가 **/
-	private void updateUI() {
-		getContentPane().removeAll();
-
+	private void updateUI () {
+		cp.removeAll();
 		JPanel p1 = new JPanel(new FlowLayout());
-		p1.add(difficultyComboBox);
-		p1.add(new StartButton(board, this));
+		// 점수 라벨 추가
+		scoreLabel = new JLabel("Score: " + calculateScore());
 
+		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
+		difficultyComboBox.addActionListener(e -> updateDifficulty());
+		p1.add(difficultyComboBox);
+		p1.add(new RestartButton(board, this));
+		p1.add(new StartButton(board, this));
+		p1.add(scoreLabel, BorderLayout.NORTH);
 		JPanel p2 = new JPanel(new GridLayout(board.getPuzzleSize(), board.getPuzzleSize()));
 		button_board = new PuzzleButton[board.getPuzzleSize()][board.getPuzzleSize()];
 		for (int row = 0; row < button_board.length; row++) {
@@ -164,21 +165,66 @@ public class PuzzleFrame extends JFrame  {
 			}
 		}
 
-		getContentPane().add(p1, BorderLayout.NORTH);
-		getContentPane().add(p2, BorderLayout.CENTER);
-		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		//왼쪽 서브 패널
+		JPanel rankinglist = new JPanel();
+		rankinglist.setLayout(new BorderLayout());
+
+		//상단 랭크 텍스트
+		JPanel textPanel = new JPanel();
+		JLabel westText = new JLabel("랭킹");
+		textPanel.add(westText);
+		westText.setFont(new Font("나눔고딕", Font.BOLD, 15));
+		textPanel.setBackground(new Color(145, 181, 255));
+		rankinglist.add(textPanel, BorderLayout.NORTH);
+
+
+		//순위, 점수 패널
+		JPanel rankpanel = new JPanel();
+		rankpanel.setLayout(new BorderLayout());
+		ranknum.setEditable(false);
+		rank.setEditable(false);
+		rankpanel.add(ranknum, BorderLayout.WEST);
+		rankpanel.add(rank, BorderLayout.CENTER);
+		ranknum.setBackground(new Color(198, 217, 255));
+		rank.setBackground(new Color(219, 231, 255));
+		ranknum.setFont(new Font("나눔고딕", Font.BOLD, 10));
+		rank.setFont(new Font("나눔고딕", Font.BOLD, 10));
+
+		//점수 "점"
+		rankpanel.add(scoresign, BorderLayout.EAST);
+		scoresign.setEditable(false);
+		scoresign.setBackground(new Color(219, 231, 255));
+		scoresign.setFont(new Font("나눔고딕", Font.BOLD, 10));
+
+		rankinglist.add(rankpanel, BorderLayout.CENTER);
+
+		importRank();
+
+		JPanel p3 = new JPanel(new GridLayout(4, 2, 20, 10));
+		p3.add(new MoveButton(board, this, 1, "↑"));
+		p3.add(new MoveButton(board, this, 2, "↓"));
+		p3.add(new MoveButton(board, this, 3, "←"));
+		p3.add(new MoveButton(board, this, 4, "→"));
+		p3.add(new LineMoveButton(board, this, 1, "↑↑"));
+		p3.add(new LineMoveButton(board, this, 2, "↓↓"));
+		p3.add(new LineMoveButton(board, this, 3, "←←"));
+		p3.add(new LineMoveButton(board, this, 4, "→→"));
+		cp.add(p1, BorderLayout.NORTH);
+		cp.add(p2, BorderLayout.CENTER);
+		cp.add(p3, BorderLayout.SOUTH);
+		cp.add(rankinglist, BorderLayout.WEST);
 
 		revalidate();
 		repaint();
 	}
 
 	/** update - 보드 프레임을 갱신함 **/
-	public void update() {
+	public void update () {
 		PuzzlePiece pp;
-		
+
 		// 점수 업데이트
 		scoreLabel.setText("Score: " + calculateScore());
-		
+
 		for (int row = 0; row < button_board.length; row++)
 			for (int col = 0; col < button_board.length; col++) {
 				pp = board.getPuzzlePiece(row, col);
@@ -191,14 +237,14 @@ public class PuzzleFrame extends JFrame  {
 			finish();
 		}
 	}
-	public void startTimer() {
+	public void startTimer () {
 		startTime = System.currentTimeMillis();
 		timer.start();
 	}
 
 
 	/** startGame - 게임을 시작하고, 게임이 이미 시작 중이면 게임을 다시 시작 **/
-	public void startGame() {
+	public void startGame () {
 		timer.stop();
 		timeLabel.setText("00:00:00");
 
@@ -212,7 +258,7 @@ public class PuzzleFrame extends JFrame  {
 	}
 
 	/** finish - 퍼즐이 완료되었을 때 마지막 피스에 "Done" 텍스트를 표시하고, 타이머를 정지하며 소요 시간을 표시 **/
-	public void finish() {
+	public void finish () {
 		int puzzleSize = board.getPuzzleSize();
 
 		if (puzzleSize == 3) {
@@ -230,61 +276,55 @@ public class PuzzleFrame extends JFrame  {
 	}
 
 	/** fail - 퍼즐 게임 실패를 표시함 */
-	public void fail() {
+	public void fail () {
 		button_board[3][3].setText("fail");
 		board.saveRank();
 	}
 
 
-
 	/** calculateScore - 움직인 횟수에 따라 점수를 부여 */
-	private int calculateScore() {
-		return 10000 - (board.getMoveCount()*10);
+	private int calculateScore () {
+		return 10000 - (board.getMoveCount() * 10);
 	}
 
-	public void importRank()
-    {
-        ranknum.setText("");
-        rank.setText("");
-        scoresign.setText("");
+	public void importRank ()
+	{
+		ranknum.setText("");
+		rank.setText("");
+		scoresign.setText("");
 
-        String ranklist = fi.read_word();
-        if(ranklist.equals(""))
-        {
-            ranknum.append("1위 ");
-            rank.append(" 0 ");
-            scoresign.append(" 점 ");
-            return;
-        }
+		String ranklist = fi.read_word();
+		if (ranklist.equals("")) {
+			ranknum.append("1위 ");
+			rank.append(" 0 ");
+			scoresign.append(" 점 ");
+			return;
+		}
 
-        String[] str = ranklist.split("\n");
-        int[] temp = new int[str.length];
+		String[] str = ranklist.split("\n");
+		int[] temp = new int[str.length];
 
-        for(int i = 0; i<str.length; i++)
-            temp[i] = Integer.parseInt(str[i]);
+		for (int i = 0; i < str.length; i++)
+			temp[i] = Integer.parseInt(str[i]);
 
-        temp = sort(temp);
+		temp = sort(temp);
 
-        for(int i = 0; i<str.length; i++)
-        {
-            ranknum.append(" "+String.valueOf(i+1)+"위 \n");
-            rank.append(" "+temp[i]+"\n");
-            scoresign.append(" 점 \n");
-        }
-    }
+		for (int i = 0; i < str.length; i++) {
+			ranknum.append(" " + String.valueOf(i + 1) + "위 \n");
+			rank.append(" " + temp[i] + "\n");
+			scoresign.append(" 점 \n");
+		}
+	}
 
-	public int[] sort(int[] arr)
-    {
-        for(int i = arr.length - 1; i>0; i-- )
-            for(int j = 0; j<i; j++)
-                if(arr[j] < arr[j + 1])
-                {
-                    int temp = arr[j];
-                    arr[j] = arr[j+1];
-                    arr[j+1] = temp;
-                }
-        return arr;
-    }
-
-
+	public int[] sort ( int[] arr)
+	{
+		for (int i = arr.length - 1; i > 0; i--)
+			for (int j = 0; j < i; j++)
+				if (arr[j] < arr[j + 1]) {
+					int temp = arr[j];
+					arr[j] = arr[j + 1];
+					arr[j + 1] = temp;
+				}
+		return arr;
+	}
 }

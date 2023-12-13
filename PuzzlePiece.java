@@ -1,4 +1,4 @@
-
+package slidepuzzleplus;
 
 /** PuzzlePiece - 슬라이드 게임 퍼즐 조각  */
 public class PuzzlePiece { 

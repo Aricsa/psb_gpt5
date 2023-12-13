@@ -1,4 +1,4 @@
-
+package slidepuzzleplus;
 import java.io.*;
 
 public class File_IO {

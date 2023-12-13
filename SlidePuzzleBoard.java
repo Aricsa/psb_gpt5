@@ -24,7 +24,7 @@ public class SlidePuzzleBoard {
 
 	private boolean game_on = false;
 
-	public SlidePuzzleBoard() {
+	public SlidePuzzleBoard(int puzzleSize) {
 
 		// 점수 관련 생성자 초기화
 		moveCount = 0;
@@ -32,6 +32,7 @@ public class SlidePuzzleBoard {
 		board = new PuzzlePiece[puzzleSize][puzzleSize];
 		initializeBoard(puzzleSize);
 	}
+
 
 	/** getPuzzlePiece - 현재 퍼즐의 크기를 확인 **/
 	 public int getPuzzleSize() {
@@ -161,20 +162,22 @@ public class SlidePuzzleBoard {
 	}
 
 	public boolean gameOver() {
-    if (empty_row != board.length - 1 || empty_col != board.length - 1)
+		if (empty_row != board.length - 1 || empty_col != board.length - 1)
 			return false;
 		else {
-      int number = 1;
-      for (int row = 0; row < board.length; row++) {
-        for (int col = 0; col < board[0].length; col++) {
-          if (board[row][col] != null && board[row][col].faceValue() != number) {
-            return false;
-          }
-          number++;
-        }
-        game_on = false;
-        return true;
-    }
+			int number = 1;
+			for (int row = 0; row < board.length; row++) {
+				for (int col = 0; col < board[0].length; col++) {
+					if (board[row][col] != null && board[row][col].faceValue() != number) {
+						return false;
+					}
+					number++;
+				}
+				game_on = false;
+			}
+		}
+		return true;
+	}
 
 	/** gameFail - 플레이어의 움직임 가능 횟수가 초과했는지 확인 
 	 * @return 초과했으면, true, 아직 더 남아있다면 false 
@@ -185,7 +188,7 @@ public class SlidePuzzleBoard {
 		else {
 			game_on = false;
 			return true;
-    }
+		}
 	}
 
 	/** initializeBoard -  퍼즐을 초기화하고 게임을 시작할 때 호출 **/
@@ -204,7 +207,6 @@ public class SlidePuzzleBoard {
 			}
 		}
 	}
-}
 
 	/** saveRank - 점수 데이터 베이스에 저장 */
     public void saveRank()
