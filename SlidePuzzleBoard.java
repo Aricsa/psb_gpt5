@@ -1,40 +1,44 @@
 package slidepuzzleplus;
 
+import java.awt.*;
 import java.util.*;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
-/** SlidePuzzleBoard models a slide puzzle. */ 
+/** SlidePuzzleBoard models a slide puzzle. */
 public class SlidePuzzleBoard {
 	private PuzzlePiece[][] board;
 	private PuzzleFrame frame;
 	File_IO fi = new File_IO();
 	JTextArea rank = new JTextArea();
-    JTextArea ranknum = new JTextArea();
-    JTextArea scoresign = new JTextArea();
+	JTextArea ranknum = new JTextArea();
+	JTextArea scoresign = new JTextArea();
 	private int score = 0;
-	
-	
+
+
 	// 움직이는 횟수에 따라 점수를 카운트
 	private int moveCount;
 
-	// 빈칸의 좌표 
+	// 빈칸의 좌표
 	private int empty_row;
 	private int empty_col;
 	// representation invariant: board[empty_row][empty_col] == null
 
 	private boolean game_on = false;
 
-	public SlidePuzzleBoard() {
+	public SlidePuzzleBoard(int puzzleSize) {
 
 		// 점수 관련 생성자 초기화
 		moveCount = 0;
 
 		board = new PuzzlePiece[puzzleSize][puzzleSize];
 		initializeBoard(puzzleSize);
+		System.out.println(Arrays.deepToString(board));
+
 	}
 
+
 	/** getPuzzlePiece - 현재 퍼즐의 크기를 확인 **/
-	 public int getPuzzleSize() {
+	public int getPuzzleSize() {
 		return board.length;
 	}
 
@@ -61,51 +65,39 @@ public class SlidePuzzleBoard {
 	/**
 	 * 이동이 가능하면, 퍼즐 조각을 빈칸으로 이동
 	 *
-	 * @param w - 이동하기 원하는 퍼즐 조각
 	 * @return 이동 성공하면 true를 리턴하고, 이동이 불가능하면 false를 리턴
 	 */
-	public boolean move(int w) {
-		int row, col; // w의 위치 
-		// 빈칸에 주변에서 w의 위치를 찾음 
-		if (found(w, empty_row - 1, empty_col)) {
-			row = empty_row - 1;
-			col = empty_col;
-		} else if (found(w, empty_row + 1, empty_col)) {
-			row = empty_row + 1;
-			col = empty_col;
-		} else if (found(w, empty_row, empty_col - 1)) {
-			row = empty_row;
-			col = empty_col - 1;
-		} else if (found(w, empty_row, empty_col + 1)) {
-			row = empty_row;
-			col = empty_col + 1;
-		} else
-			return false;
+	public boolean move(int row, int col) {
+		if ((row == empty_row && Math.abs(col - empty_col) == 1) ||
+				(col == empty_col && Math.abs(row - empty_row) == 1)) {
 
-		 // 움직임이 가능한 경우 moveCount를 증가시킨다.
-        if (board[empty_row][empty_col] != null) {
-            moveCount();
-            frame.update();
-        }
+			board[empty_row][empty_col] = board[row][col];
+			board[row][col] = null;
 
-		// w를 빈칸에 복사
-		board[empty_row][empty_col] = board[row][col];
-		empty_row = row;
-		empty_col = col;
-		board[empty_row][empty_col] = null;
-		return true;
+			empty_row = row;
+			empty_col = col;
+
+			return true;
+		}
+
+		// 움직임이 가능한 경우 moveCount를 증가시킨다.
+		if (board[empty_row][empty_col] != null) {
+			moveCount();
+			frame.update();
+		}
+		return false;
 	}
 
 	private boolean found(int v, int row, int col) {
 		if (row >= 0 && row < board.length && col >= 0 && col < board[0].length)
-	/**
-	 * found - board[row][col]에 퍼즐 조각 v가 있는지 확인
-	 *
-	 * @param v   - 확인할 수
-	 * @param row - 보드의 가로줄 인덱스
-	 * @param col - 보드의 세로줄 인덱스
-	 * @return 있으면 true, 없으면 false
-	 */
+		/**
+		 * found - board[row][col]에 퍼즐 조각 v가 있는지 확인
+		 *
+		 * @param v   - 확인할 수
+		 * @param row - 보드의 가로줄 인덱스
+		 * @param col - 보드의 세로줄 인덱스
+		 * @return 있으면 true, 없으면 false
+		 */
 			return board[row][col].faceValue() == v;
 		else
 			return false;
@@ -129,6 +121,88 @@ public class SlidePuzzleBoard {
 		game_on = true;
 	}
 
+	public void createPuzzleBoardWithPhotos(String difficulty) {
+		int puzzleSize;
+		String folderPath;
+
+		switch (difficulty) {
+			case "초급":
+				puzzleSize = 3;
+				folderPath = "images/Hanyangi_3x3/";
+				break;
+			case "중급":
+				puzzleSize = 4;
+				folderPath = "images/Hanyangi_4x4/";
+				break;
+			case "고급":
+				puzzleSize = 5;
+				folderPath = "images/Hanyangi_5x5/";
+				break;
+			default:
+				puzzleSize = 3;
+				folderPath = "images/Hanyangi_3x3/";
+		}
+
+
+		int[] numbers = generateRandomPermutation(puzzleSize * puzzleSize);
+		int i = 0;
+
+		for (int row = 0; row < puzzleSize; row++) {
+			for (int col = 0; col < puzzleSize; col++) {
+				if (col != puzzleSize - 1 || row != puzzleSize - 1) {
+					board[row][col] = new PuzzlePiece(numbers[i] + 1);
+					setPhoto(row, col, folderPath + "Hanyangi_" + String.format("%02d", numbers[i] + 1) + ".png");
+					i += 1;
+				} else {
+					board[puzzleSize - 1][puzzleSize - 1] = null;
+					empty_row = puzzleSize - 1;
+					empty_col = puzzleSize - 1;
+				}
+			}
+		}
+
+		game_on = true;
+	}
+
+	public void setPhoto(int row, int col, String difficulty) {
+		PuzzlePiece piece = board[row][col];
+		if (piece != null) {
+			int faceValue = piece.faceValue();
+			String directoryPath;
+
+			switch (difficulty) {
+				case "초급":
+					directoryPath = "images/Hanyangi_3x3/";
+					break;
+				case "중급":
+					directoryPath = "images/Hanyangi_4x4/";
+					break;
+				case "고급":
+					directoryPath = "images/Hanyangi_5x5/";
+					break;
+				default:
+					directoryPath = "images/Hanyangi_3x3/";
+			}
+
+			String fileName = String.format("Hanyangi_%02d.png", faceValue);
+			String photoPath = directoryPath + fileName;
+			System.out.println("directoryPath: " + directoryPath);
+			System.out.println("fileName: " + fileName);
+			System.out.println("Setting photo for row " + row + ", col " + col + ": " + photoPath);
+			System.out.println("faceValue: " + faceValue);
+			System.out.println("fileName: " + fileName);
+			System.out.println("photoPath: " + photoPath);
+
+
+			ImageIcon icon = new ImageIcon(photoPath);
+			Image image = icon.getImage();
+
+			piece.setImage(image);
+		} else {
+			System.out.println("Warning: PuzzlePiece is null at row " + row + ", col " + col);
+		}
+	}
+
 	/**
 	 * generateRandomPermutation - 0~n-1 범위의 정수 수열을 무작위로 섞은 배열을 리턴 한다.
 	 *
@@ -145,47 +219,49 @@ public class SlidePuzzleBoard {
 		}
 		return permutation;
 	}
-	
+
 	/** moveCount - 플레이어가 게임 중 퍼즐을 움직이는 수 계산
 	 */
 
-	 public void moveCount(){
+	public void moveCount(){
 		moveCount++;
-	 }
+	}
 
-	 /** getMoveCount - 현재 움직인 횟수를 반환하는 메서드 (점수 계산, 게임 중 출력) 
-	  * @return 움직인 횟수
+	/** getMoveCount - 현재 움직인 횟수를 반환하는 메서드 (점수 계산, 게임 중 출력)
+	 * @return 움직인 횟수
 	 */
 	public int getMoveCount(){
 		return moveCount;
 	}
 
 	public boolean gameOver() {
-    if (empty_row != board.length - 1 || empty_col != board.length - 1)
+		if (empty_row != board.length - 1 || empty_col != board.length - 1)
 			return false;
 		else {
-      int number = 1;
-      for (int row = 0; row < board.length; row++) {
-        for (int col = 0; col < board[0].length; col++) {
-          if (board[row][col] != null && board[row][col].faceValue() != number) {
-            return false;
-          }
-          number++;
-        }
-        game_on = false;
-        return true;
-    }
+			int number = 1;
+			for (int row = 0; row < board.length; row++) {
+				for (int col = 0; col < board[0].length; col++) {
+					if (board[row][col] != null && board[row][col].faceValue() != number) {
+						return false;
+					}
+					number++;
+				}
+				game_on = false;
+			}
+		}
+		return true;
+	}
 
-	/** gameFail - 플레이어의 움직임 가능 횟수가 초과했는지 확인 
-	 * @return 초과했으면, true, 아직 더 남아있다면 false 
+	/** gameFail - 플레이어의 움직임 가능 횟수가 초과했는지 확인
+	 * @return 초과했으면, true, 아직 더 남아있다면 false
 	 */
 	public boolean gameFail() {
-		if (10000-moveCount*10 > 0)
+		if (10000-moveCount*1 > 0)
 			return false;
 		else {
 			game_on = false;
 			return true;
-    }
+		}
 	}
 
 	/** initializeBoard -  퍼즐을 초기화하고 게임을 시작할 때 호출 **/
@@ -204,24 +280,23 @@ public class SlidePuzzleBoard {
 			}
 		}
 	}
-}
 
 	/** saveRank - 점수 데이터 베이스에 저장 */
-    public void saveRank()
-    {
+	public void saveRank()
+	{
 		score = 10000 - moveCount * 10; // 수정해야할 부분(김민서)
-        if(score != 0)
-            fi.saveFile(score+"\n");
-    }
-	
+		if(score != 0)
+			fi.saveFile(score+"\n");
+	}
+
 	/** restart - 점수 결과를 저장하고, 설정값 초기화를 통한 게임 재시작 */
 	public void restart()
-    {
-        frame.importRank();
+	{
+		frame.importRank();
 		moveCount = 0;
 		score = 10000;
-    
-    }
+
+	}
 
 	public boolean newmove(int type)
 	{

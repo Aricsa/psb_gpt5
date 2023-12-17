@@ -1,3 +1,4 @@
+package slidepuzzleplus;
 
 import java.io.*;
 
