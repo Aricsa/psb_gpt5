@@ -1,8 +1,8 @@
 
 
 
-import java.util.*;
 
+import java.util.*;
 import javax.swing.JTextArea;
 
 /** SlidePuzzleBoard models a slide puzzle. */ 
@@ -26,25 +26,19 @@ public class SlidePuzzleBoard {
 
 	private boolean game_on = false;
 
-	public SlidePuzzleBoard() {
+	public SlidePuzzleBoard(int puzzleSize) {
 
 		// 점수 관련 생성자 초기화
 		moveCount = 0;
 
-		board = new PuzzlePiece[4][4];
-		// 퍼즐 조각 1~15를 보드에 순서대로 끼우기 
-		int number = 1;
-		for (int row = 0; row < 4; row++)
-			for (int col = 0; col < 4; col++) {
-				if (col != 3 || row != 3) {
-					board[row][col] = new PuzzlePiece(number);
-					number += 1;
-				} else {
-					board[3][3] = null;
-					empty_row = 3;
-					empty_col = 3;
-				}
-			}
+		board = new PuzzlePiece[puzzleSize][puzzleSize];
+		initializeBoard(puzzleSize);
+	}
+
+
+	/** getPuzzlePiece - 현재 퍼즐의 크기를 확인 **/
+	 public int getPuzzleSize() {
+		return board.length;
 	}
 
 	/**
@@ -99,13 +93,14 @@ public class SlidePuzzleBoard {
 
 		// w를 빈칸에 복사
 		board[empty_row][empty_col] = board[row][col];
-		// 빈칸 위치를 새로 설정하고, w를 제거
 		empty_row = row;
 		empty_col = col;
 		board[empty_row][empty_col] = null;
 		return true;
 	}
 
+	private boolean found(int v, int row, int col) {
+		if (row >= 0 && row < board.length && col >= 0 && col < board[0].length)
 	/**
 	 * found - board[row][col]에 퍼즐 조각 v가 있는지 확인
 	 *
@@ -114,28 +109,24 @@ public class SlidePuzzleBoard {
 	 * @param col - 보드의 세로줄 인덱스
 	 * @return 있으면 true, 없으면 false
 	 */
-	private boolean found(int v, int row, int col) {
-		if (row >= 0 && row <= 3 && col >= 0 && col <= 3)
 			return board[row][col].faceValue() == v;
 		else
 			return false;
 	}
 
-	/**
-	 * createPuzzleBoard - 퍼즐 게임 초기 보드 생성
-	 */
+	/** createPuzzleBoard -  퍼즐을 생성하고 셔플, 보드의 크기에 따라 1부터 n까지의 숫자로 초기화되며, 마지막 피스는 null로 설정 **/
 	public void createPuzzleBoard() {
-		int[] numbers = generateRandomPermutation(15);
+		int[] numbers = generateRandomPermutation((board.length * board[0].length) - 1);
 		int i = 0;
-		for (int row = 0; row < 4; row++)
-			for (int col = 0; col < 4; col++) {
-				if (col != 3 || row != 3) {
+		for (int row = 0; row < board.length; row++)
+			for (int col = 0; col < board[0].length; col++) {
+				if (col != board[0].length - 1 || row != board.length - 1) {
 					board[row][col] = new PuzzlePiece(numbers[i] + 1);
 					i += 1;
 				} else {
-					board[3][3] = null;
-					empty_row = 3;
-					empty_col = 3;
+					board[board.length - 1][board[0].length - 1] = null;
+					empty_row = board.length - 1;
+					empty_col = board[0].length - 1;
 				}
 			}
 		game_on = true;
@@ -171,27 +162,23 @@ public class SlidePuzzleBoard {
 	public int getMoveCount(){
 		return moveCount;
 	}
-	
-	/** gameOver - 퍼즐 게임이 끝났는지를 확인  
-	 * @return 목표를 달성했으면 true, 아직 더 진행해야 하면 false 
-	 */
+
 	public boolean gameOver() {
-		if (empty_row != 3 || empty_col != 3)
+		if (empty_row != board.length - 1 || empty_col != board.length - 1)
 			return false;
 		else {
 			int number = 1;
-			for (int row = 0; row < 4; row++)
-				for (int col = 0; col < 4; col++) {
-					if (col != 3 || row != 3)
-						if (board[row][col].faceValue() != number)
-							return false;
-						else
-							number += 1;
+			for (int row = 0; row < board.length; row++) {
+				for (int col = 0; col < board[0].length; col++) {
+					if (board[row][col] != null && board[row][col].faceValue() != number) {
+						return false;
+					}
+					number++;
 				}
-			game_on = false;
-			return true;
-
+				game_on = false;
+			}
 		}
+		return true;
 	}
 
 	/** gameFail - 플레이어의 움직임 가능 횟수가 초과했는지 확인 
@@ -203,12 +190,25 @@ public class SlidePuzzleBoard {
 		else {
 			game_on = false;
 			return true;
-			
 		}
-
 	}
 
-	
+	/** initializeBoard -  퍼즐을 초기화하고 게임을 시작할 때 호출 **/
+	private void initializeBoard(int puzzleSize) {
+		int number = 1;
+		for (int row = 0; row < puzzleSize; row++) {
+			for (int col = 0; col < puzzleSize; col++) {
+				if (row != puzzleSize - 1 || col != puzzleSize - 1) {
+					board[row][col] = new PuzzlePiece(number);
+					number++;
+				} else {
+					board[row][col] = null;
+					empty_row = row;
+					empty_col = col;
+				}
+			}
+		}
+	}
 
 	/** saveRank - 점수 데이터 베이스에 저장 */
     public void saveRank()
