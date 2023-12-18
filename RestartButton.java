@@ -1,3 +1,5 @@
+
+
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -17,8 +19,6 @@ public class RestartButton extends JButton implements ActionListener {
     
 	public void actionPerformed(ActionEvent e) {
         
-        board.saveRank();
-        frame.importRank();
         board.restart();
         board.createPuzzleBoard();
 		frame.update();

@@ -1,4 +1,5 @@
 
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -120,7 +121,6 @@ public class PuzzleFrame extends JFrame  {
 	/** fail - 퍼즐 게임 실패를 표시함 */
 	public void fail() {
 		button_board[3][3].setText("fail");
-		board.saveRank();
 	}
 
 
@@ -173,15 +173,6 @@ public class PuzzleFrame extends JFrame  {
                 }
         return arr;
     }
-
-
-
-    // public void initialize_ranking()
-    // {
-        
-    // }
-
-    
 
 	
 

@@ -1,4 +1,6 @@
 
+
+
 import java.util.*;
 
 import javax.swing.JTextArea;
@@ -219,13 +221,11 @@ public class SlidePuzzleBoard {
 	/** restart - 점수 결과를 저장하고, 설정값 초기화를 통한 게임 재시작 */
 	public void restart()
     {
-        frame.importRank();
 		moveCount = 0;
 		score = 10000;
     
     }
 
-=======
 	public boolean newmove(int type)
 	{
 		int row, col;
