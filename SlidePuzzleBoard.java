@@ -213,7 +213,7 @@ public class SlidePuzzleBoard {
 	/** saveRank - 점수 데이터 베이스에 저장 */
     public void saveRank()
     {
-		score = 10000 - moveCount * 10; // 수정해야할 부분(김민서)
+		score = 10000 - moveCount * 10; 
         if(score != 0)
             fi.saveFile(score+"\n");
     }
