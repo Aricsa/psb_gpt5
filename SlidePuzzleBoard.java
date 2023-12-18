@@ -1,4 +1,6 @@
-package slidepuzzleplus;
+
+
+
 
 import java.util.*;
 import javax.swing.JTextArea;
@@ -211,7 +213,7 @@ public class SlidePuzzleBoard {
 	/** saveRank - 점수 데이터 베이스에 저장 */
     public void saveRank()
     {
-		score = 10000 - moveCount * 10; // 수정해야할 부분(김민서)
+		score = 10000 - moveCount * 10; 
         if(score != 0)
             fi.saveFile(score+"\n");
     }
@@ -219,7 +221,6 @@ public class SlidePuzzleBoard {
 	/** restart - 점수 결과를 저장하고, 설정값 초기화를 통한 게임 재시작 */
 	public void restart()
     {
-        frame.importRank();
 		moveCount = 0;
 		score = 10000;
     

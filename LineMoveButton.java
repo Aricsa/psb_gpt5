@@ -1,4 +1,4 @@
-package slidepuzzleplus;
+
 
 import java.awt.event.*;
 import javax.swing.*;

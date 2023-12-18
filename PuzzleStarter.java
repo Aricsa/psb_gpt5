@@ -1,4 +1,5 @@
-package slidepuzzleplus;
+
+
 
 public class PuzzleStarter {
 

@@ -1,4 +1,4 @@
-package slidepuzzleplus;
+
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -24,7 +24,6 @@ public class PuzzleButton extends JButton implements ActionListener {
 					board.saveRank();
 			    } else if(board.gameFail()){
 					frame.fail();
-					board.saveRank();
 				}
 				
 			}

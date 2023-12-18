@@ -1,4 +1,4 @@
-package slidepuzzleplus;
+
 import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -26,8 +26,8 @@ public class PuzzleFrame extends JFrame {
 		cp.setLayout(new BorderLayout());
 
 		JPanel p1 = new JPanel(new FlowLayout());
-		// 점수 라벨 추가
-		scoreLabel = new JLabel("Score: " + calculateScore());
+		// 남은 이동 횟수 라벨 (점수 연계)
+		scoreLabel = new JLabel("Remaining moves: " + LeftMovement());
 
 		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
 		difficultyComboBox.addActionListener(e -> updateDifficulty());
@@ -147,8 +147,8 @@ public class PuzzleFrame extends JFrame {
 	private void updateUI () {
 		cp.removeAll();
 		JPanel p1 = new JPanel(new FlowLayout());
-		// 점수 라벨 추가
-		scoreLabel = new JLabel("Score: " + calculateScore());
+		// 남은 이동횟수 라벨 추가(점수 연계)
+		scoreLabel = new JLabel("Remaining moves: " + LeftMovement());
 
 		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
 		difficultyComboBox.addActionListener(e -> updateDifficulty());
@@ -222,8 +222,8 @@ public class PuzzleFrame extends JFrame {
 	public void update () {
 		PuzzlePiece pp;
 
-		// 점수 업데이트
-		scoreLabel.setText("Score: " + calculateScore());
+		// 남은 이동 가능 횟수 업데이트
+		scoreLabel.setText("Remaining moves: " + LeftMovement());
 
 		for (int row = 0; row < button_board.length; row++)
 			for (int col = 0; col < button_board.length; col++) {
@@ -278,13 +278,12 @@ public class PuzzleFrame extends JFrame {
 	/** fail - 퍼즐 게임 실패를 표시함 */
 	public void fail () {
 		button_board[3][3].setText("fail");
-		board.saveRank();
 	}
 
 
-	/** calculateScore - 움직인 횟수에 따라 점수를 부여 */
-	private int calculateScore () {
-		return 10000 - (board.getMoveCount() * 10);
+	/** LeftMovement - 움직인 횟수에 따라 점수를 부여 */
+	private int LeftMovement () {
+		return 1000 - (board.getMoveCount());
 	}
 
 	public void importRank ()
@@ -316,15 +315,17 @@ public class PuzzleFrame extends JFrame {
 		}
 	}
 
-	public int[] sort ( int[] arr)
-	{
-		for (int i = arr.length - 1; i > 0; i--)
-			for (int j = 0; j < i; j++)
-				if (arr[j] < arr[j + 1]) {
-					int temp = arr[j];
-					arr[j] = arr[j + 1];
-					arr[j + 1] = temp;
-				}
-		return arr;
-	}
+	public int[] sort(int[] arr)
+    {
+        for(int i = arr.length - 1; i>0; i-- )
+            for(int j = 0; j<i; j++)
+                if(arr[j] < arr[j + 1])
+                {
+                    int temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                }
+        return arr;
+    }
+
 }

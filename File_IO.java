@@ -1,4 +1,4 @@
-package slidepuzzleplus;
+
 import java.io.*;
 
 public class File_IO {
@@ -35,6 +35,8 @@ public class File_IO {
         } catch(IOException e) {};
     }
 
+
+    
     public String read_word()
     {
         String str = "";
