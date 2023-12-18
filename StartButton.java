@@ -1,5 +1,4 @@
 package slidepuzzleplus;
-
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -18,7 +17,6 @@ public class StartButton extends JButton implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		board.createPuzzleBoard();
 		frame.update();
-
+		frame.startTimer();
 	}
-
 }
