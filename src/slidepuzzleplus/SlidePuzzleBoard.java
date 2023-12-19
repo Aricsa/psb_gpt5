@@ -1,18 +1,13 @@
 package slidepuzzleplus;
 
+import java.awt.*;
 import java.util.*;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 /** SlidePuzzleBoard models a slide puzzle. */ 
 public class SlidePuzzleBoard {
 	private PuzzlePiece[][] board;
-	private PuzzleFrame frame;
 	File_IO fi = new File_IO();
-	JTextArea rank = new JTextArea();
-    JTextArea ranknum = new JTextArea();
-    JTextArea scoresign = new JTextArea();
-	private int score = 0;
-	
 	
 	// 움직이는 횟수에 따라 점수를 카운트
 	private int moveCount;
@@ -20,7 +15,6 @@ public class SlidePuzzleBoard {
 	// 빈칸의 좌표 
 	private int empty_row;
 	private int empty_col;
-	// representation invariant: board[empty_row][empty_col] == null
 
 	private boolean game_on = false;
 
@@ -93,8 +87,6 @@ public class SlidePuzzleBoard {
 		return true;
 	}
 
-	private boolean found(int v, int row, int col) {
-		if (row >= 0 && row < board.length && col >= 0 && col < board[0].length)
 	/**
 	 * found - board[row][col]에 퍼즐 조각 v가 있는지 확인
 	 *
@@ -103,27 +95,63 @@ public class SlidePuzzleBoard {
 	 * @param col - 보드의 세로줄 인덱스
 	 * @return 있으면 true, 없으면 false
 	 */
+	private boolean found(int v, int row, int col) {
+		if (row >= 0 && row < board.length && col >= 0 && col < board[0].length)
 			return board[row][col].faceValue() == v;
 		else
 			return false;
 	}
 
 	/** createPuzzleBoard -  퍼즐을 생성하고 셔플, 보드의 크기에 따라 1부터 n까지의 숫자로 초기화되며, 마지막 피스는 null로 설정 **/
-	public void createPuzzleBoard() {
-		int[] numbers = generateRandomPermutation((board.length * board[0].length) - 1);
+	public void createPuzzleBoardWithPhotos(String difficulty) {
+		int puzzleSize;
+		String folderPath;
+
+		switch (difficulty) {
+			case "초급":
+				puzzleSize = 3;
+				folderPath = "images/Hanyangi_3x3/";
+				break;
+			case "중급":
+				puzzleSize = 4;
+				folderPath = "images/Hanyangi_4x4/";
+				break;
+			case "고급":
+				puzzleSize = 5;
+				folderPath = "images/Hanyangi_5x5/";
+				break;
+			default:
+				puzzleSize = 3;
+				folderPath = "images/Hanyangi_3x3/";
+		}
+
+		int[] numbers = generateRandomPermutation((puzzleSize * puzzleSize) - 1);
 		int i = 0;
-		for (int row = 0; row < board.length; row++)
-			for (int col = 0; col < board[0].length; col++) {
-				if (col != board[0].length - 1 || row != board.length - 1) {
+		for (int row = 0; row < puzzleSize; row++) {
+			for (int col = 0; col < puzzleSize; col++) {
+				if (col != puzzleSize - 1 || row != puzzleSize - 1) {
 					board[row][col] = new PuzzlePiece(numbers[i] + 1);
+					setPhoto(row, col, folderPath + "Hanyangi_" + String.format("%02d", numbers[i] + 1) + ".png");
 					i += 1;
 				} else {
-					board[board.length - 1][board[0].length - 1] = null;
-					empty_row = board.length - 1;
-					empty_col = board[0].length - 1;
+					board[puzzleSize - 1][puzzleSize - 1] = null;
+					empty_row = puzzleSize - 1;
+					empty_col = puzzleSize - 1;
 				}
 			}
+		}
 		game_on = true;
+	}
+
+	public void setPhoto(int row, int col, String difficulty) {
+		PuzzlePiece piece = board[row][col];
+		if (piece != null) {
+			ImageIcon icon = new ImageIcon(difficulty);
+			Image image = icon.getImage();
+			piece.setImage(image);
+		} else {
+			System.out.println("Warning: PuzzlePiece is null at row " + row + ", col " + col);
+		}
 	}
 
 	/**
@@ -229,19 +257,21 @@ public class SlidePuzzleBoard {
 	/** saveRank - 점수 데이터 베이스에 저장 */
     public void saveRank()
     {
-		score = 10000 - moveCount * 10; // 수정해야할 부분(김민서)
+		int default_score = 10000;
+		if (board.length == 4)
+			default_score = 20000;
+		else if (board.length == 5)
+			default_score = 30000;
+		int score = default_score - moveCount * 10;
         if(score != 0)
             fi.saveFile(score+"\n");
     }
 	
 	/** restart - 점수 결과를 저장하고, 설정값 초기화를 통한 게임 재시작 */
-	public void restart(PuzzleFrame f)
+	public void restart()
     {
-        f.importRank();
 		moveCount = 0;
-		score = 10000;
-    
-    }
+	}
 
 	public boolean newmove(int type)
 	{

@@ -21,8 +21,12 @@ public class LineMoveButton extends JButton implements ActionListener {
         if (board.gameOn()) {
             while (board.newmove(type)) {
                 frame.update();
-                if (board.gameOver())
+                if (board.gameOver()) {
                     frame.finish();
+                }
+                else if (board.gameFail()){
+                    frame.fail();
+                }
             }
         }
     }

@@ -23,18 +23,26 @@ public class PuzzleFrame extends JFrame {
 	public PuzzleFrame() {
 		board = new SlidePuzzleBoard(3);
 		button_board = new PuzzleButton[board.getPuzzleSize()][board.getPuzzleSize()];
-		cp.setLayout(new BorderLayout());
+		cp.setLayout(new BorderLayout(20, 20));
 
-		JPanel p1 = new JPanel(new FlowLayout());
+		JPanel p1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
 		// 점수 라벨 추가
-		scoreLabel = new JLabel("Score: " + calculateScore());
+		scoreLabel = new JLabel("Remaining moves: " + LeftMovement());
 
 		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
 		difficultyComboBox.addActionListener(e -> updateDifficulty());
 		p1.add(difficultyComboBox);
-		p1.add(new RestartButton(board, this));
-		p1.add(new StartButton(board, this));
-		p1.add(scoreLabel, BorderLayout.NORTH);
+		p1.add(new StartButton(board, this, difficultyComboBox));
+		p1.add(scoreLabel);
+
+		timeLabel = new JLabel("00:00:00");
+		buttonPanel.add(timeLabel);
+		p1.add(buttonPanel);
+
+		timer = new Timer(1000, e -> updateTimer());
+		timer.setInitialDelay(0);
+
+
 		JPanel p2 = new JPanel(new GridLayout(board.getPuzzleSize(), board.getPuzzleSize()));
 		for (int row = 0; row < button_board.length; row++) {
 			for (int col = 0; col < button_board.length; col++) {
@@ -54,7 +62,6 @@ public class PuzzleFrame extends JFrame {
 		westText.setFont(new Font("나눔고딕", Font.BOLD, 15));
 		textPanel.setBackground(new Color(145, 181, 255));
 		rankinglist.add(textPanel, BorderLayout.NORTH);
-
 
 		//순위, 점수 패널
 		JPanel rankpanel = new JPanel();
@@ -92,16 +99,10 @@ public class PuzzleFrame extends JFrame {
 		cp.add(p3, BorderLayout.SOUTH);
 		cp.add(rankinglist, BorderLayout.WEST);
 		setTitle("Slide Puzzle");
-		setSize(400, 600);
+		setSize(600, 700);
 		setVisible(true);
+		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		timeLabel = new JLabel("00:00:00");
-		buttonPanel.add(timeLabel);
-		cp.add(buttonPanel, BorderLayout.EAST);
-
-		timer = new Timer(1000, e -> updateTimer());
-		timer.setInitialDelay(0);
 	}
 
 		/** updateTimer -  게임이 시작된 후 경과한 시간을 표시하고 업데이트 **/
@@ -147,14 +148,13 @@ public class PuzzleFrame extends JFrame {
 		cp.removeAll();
 		JPanel p1 = new JPanel(new FlowLayout());
 		// 점수 라벨 추가
-		scoreLabel = new JLabel("Score: " + calculateScore());
+		scoreLabel = new JLabel("Remaining moves: " + LeftMovement());
 
-		difficultyComboBox = new JComboBox<>(new String[]{"초급", "중급", "고급"});
-		difficultyComboBox.addActionListener(e -> updateDifficulty());
 		p1.add(difficultyComboBox);
-		p1.add(new RestartButton(board, this));
-		p1.add(new StartButton(board, this));
-		p1.add(scoreLabel, BorderLayout.NORTH);
+		p1.add(new StartButton(board, this, difficultyComboBox));
+		p1.add(scoreLabel);
+		p1.add(buttonPanel);
+
 		JPanel p2 = new JPanel(new GridLayout(board.getPuzzleSize(), board.getPuzzleSize()));
 		button_board = new PuzzleButton[board.getPuzzleSize()][board.getPuzzleSize()];
 		for (int row = 0; row < button_board.length; row++) {
@@ -215,8 +215,6 @@ public class PuzzleFrame extends JFrame {
 
 		revalidate();
 		repaint();
-
-		cp.add(buttonPanel, BorderLayout.EAST);
 	}
 
 	/** update - 보드 프레임을 갱신함 **/
@@ -224,15 +222,20 @@ public class PuzzleFrame extends JFrame {
 		PuzzlePiece pp;
 
 		// 점수 업데이트
-		scoreLabel.setText("Score: " + calculateScore());
+		scoreLabel.setText("Remaining moves: " + LeftMovement());
 
 		for (int row = 0; row < button_board.length; row++)
 			for (int col = 0; col < button_board.length; col++) {
 				pp = board.getPuzzlePiece(row, col);
-				if (pp != null)
-					button_board[row][col].setText(Integer.toString(pp.faceValue()));
-				else
-					button_board[row][col].setText("");
+				if (pp != null) {
+					button_board[row][col].setName(Integer.toString(pp.faceValue()));
+					Image image = pp.getImage();
+					button_board[row][col].setButtonImage(image);
+				}
+				else {
+					button_board[row][col].setButtonImage(null);
+					button_board[row][col].setName("");
+				}
 			}
 		if (!board.gameOn()) {
 			finish();
@@ -243,48 +246,45 @@ public class PuzzleFrame extends JFrame {
 		timer.start();
 	}
 
-
-	/** startGame - 게임을 시작하고, 게임이 이미 시작 중이면 게임을 다시 시작 **/
-	public void startGame () {
+	/** setGame - 게임을 시작하고, 게임이 이미 시작 중이면 게임을 다시 시작 **/
+	public void setGame () {
 		timer.stop();
 		timeLabel.setText("00:00:00");
-
-		if (timer.isRunning()) {
-			timer.restart();
-		} else {
-			startTimer();
-		}
-		board.createPuzzleBoard();
 		updateUI();
 	}
 
 	/** finish - 퍼즐이 완료되었을 때 마지막 피스에 "Done" 텍스트를 표시하고, 타이머를 정지하며 소요 시간을 표시 **/
 	public void finish () {
 		int puzzleSize = board.getPuzzleSize();
-
-		if (puzzleSize == 3) {
-			button_board[2][2].setText("Done");
-		} else {
-			button_board[puzzleSize - 1][puzzleSize - 1].setText("Done");
-		}
+		String image_path = "";
+		if (puzzleSize == 4)
+			image_path += "images/Hanyangi_4x4/";
+		else if (puzzleSize == 5)
+			image_path += "images/Hanyangi_5x5/";
+		else
+			image_path += "images/Hanyangi_3x3/";
+		image_path += "Hanyangi_" + String.format("%02d",puzzleSize * puzzleSize) + ".png";
+		Image image = new ImageIcon(image_path).getImage();
+		button_board[puzzleSize - 1][puzzleSize - 1].setButtonImage(image);
 		timer.stop();
 		updateTimer();
 
 		String message = "소요 시간 : " + timeLabel.getText();
 		JOptionPane.showMessageDialog(this, message, "게임 종료", JOptionPane.INFORMATION_MESSAGE);
-		startGame();
+		setGame();
+		board.saveRank();
+		importRank();
 	}
 
 	/** fail - 퍼즐 게임 실패를 표시함 */
 	public void fail () {
-		button_board[3][3].setText("fail");
-		board.saveRank();
+		button_board[button_board.length - 1][button_board.length - 1].setText("fail");
 	}
 
 
-	/** calculateScore - 움직인 횟수에 따라 점수를 부여 */
-	private int calculateScore () {
-		return 10000 - (board.getMoveCount() * 10);
+	/** LeftMovement - 움직인 횟수에 따라 점수를 부여 */
+	private int LeftMovement () {
+		return 1000 - (board.getMoveCount());
 	}
 
 	public void importRank ()

@@ -23,6 +23,9 @@ public class MoveButton extends JButton implements ActionListener {
                 frame.update();
                 if (board.gameOver())
                     frame.finish();
+                else if (board.gameFail()){
+                    frame.fail();
+                }
             }
         }
     }
