@@ -17,6 +17,7 @@ public class RestartButton extends JButton implements ActionListener {
     
 	public void actionPerformed(ActionEvent e) {
         
+		
         board.restart();
         board.createPuzzleBoard();
 		frame.update();
